@@ -1,0 +1,59 @@
+.card-container{
+    width: 220px;
+    height: 222px;
+    border: 1px solid #53c8a580;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.top-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin: 8px 0;
+}
+
+.state-name{
+    font-size: 16px;
+    font-weight: 700px;
+}
+
+.text-cases{
+    font-size: 12px;
+    font-weight: 500px;
+}
+
+.top-text{
+    font-size: 12px;
+    font-weight: 500px;
+}
+
+
+.bot-container{
+    border-top: 1px solid #53c8a521;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-top: 16px;
+}
+
+.card-number{
+    font-size: 10px;
+    font-weight: 500px;
+}
+
+.card-text{
+    font-size: 8px;
+    font-weight: 500px;
+}
+
+.bot-line{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+}
