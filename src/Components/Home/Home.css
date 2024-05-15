@@ -59,10 +59,13 @@ main{
 .global-stats{
     border: 1px solid #53c8a580;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     height: 222px;
     border-radius: 10px;
+}
+
+.graph-container{
+    margin: auto;
 }
 
 .stats-container{

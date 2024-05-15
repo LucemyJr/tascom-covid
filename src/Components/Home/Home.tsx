@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import "./Home.css";
 import Tittle from '../Tittle/Tittle.jsx';
 import Card from '../Card/Card';
+import { Chart } from "react-google-charts";
 
 interface DataProps {
     uid: number;
@@ -17,10 +18,12 @@ interface DataProps {
 }
 
 const Home = () => {
-
     const [brazilConfirmed, setBrazilConfirmed] = useState<number>(0);
     const [brazilDeaths, setBrazilDeaths] = useState<number>(0);
+    const [brazilSuspects, setBrazilSuspects] = useState<number>(0);
+    const [brazilRefuses, setBrazilRefuses] = useState<number>(0);
     const [selectedStates, setSelectedStates] = useState<DataProps[]>([]);
+    const [chartData, setChartData] = useState<Array<Array<string | number>>>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,14 +32,17 @@ const Home = () => {
                 const data = await response.json();
 
                 // Somando todos os casos Confirmados e casos de Morte para obter os valores totais do Brasil
-                const totalCases = data.data.reduce((acc: number, curr: DataProps) => acc + curr.cases, 0); 
+                const totalCases = data.data.reduce((acc: number, curr: DataProps) => acc + curr.cases, 0);
                 const totalDeaths = data.data.reduce((acc: number, curr: DataProps) => acc + curr.deaths, 0);
+                const totalSuspects = data.data.reduce((acc: number, curr: DataProps) => acc + curr.suspects, 0);
+                const totalRefuses = data.data.reduce((acc: number, curr: DataProps) => acc + curr.refuses, 0);
 
                 setBrazilConfirmed(totalCases);
                 setBrazilDeaths(totalDeaths);
+                setBrazilSuspects(totalSuspects);
+                setBrazilRefuses(totalRefuses);
 
                 const formattedData = data.data.map((state: DataProps) => {
-
                     const date = new Date(state.datetime);
                     const formattedDate = `${date.getDate()}/${(date.getMonth() + 1).toString().padStart(2, '0')} - `;
 
@@ -52,6 +58,18 @@ const Home = () => {
                 });
 
                 setSelectedStates(formattedData.slice(0, 4));
+
+                const chartDataArray: Array<Array<string | number>> = [
+                    ["", "Cases", "Death"]
+                ];
+                formattedData.forEach((state: DataProps) => {
+                    chartDataArray.push([
+                        state.state,
+                        state.cases,
+                        state.deaths,
+                    ]);
+                });
+                setChartData(chartDataArray);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -59,6 +77,8 @@ const Home = () => {
 
         fetchData();
     }, []);
+
+    
 
     return (
         <>
@@ -92,22 +112,36 @@ const Home = () => {
                             </div>
                             <div className="small-stats-container">
                                 <div className="small-stats">
-                                    <h1 className="total-small">5743</h1>
-                                    <h1 className="subtittle-small green">NEW DEATHS</h1>
+                                    <h1 className="total-small">{brazilSuspects.toLocaleString()}</h1>
+                                    <h1 className="subtittle-small green">TOTAL SUSPECTS</h1>
                                 </div>
                                 <div className="small-stats">
-                                    <h1 className="total-small">1587</h1>
-                                    <h1 className="subtittle-small green">NEW CONFIRMEDS</h1>
+                                    <h1 className="total-small">{brazilSuspects.toLocaleString()}</h1>
+                                    <h1 className="subtittle-small green">TOTAL SUSPECTS</h1>
                                 </div>
                                 <div className="small-stats">
-                                    <h1 className="total-small">487,695</h1>
-                                    <h1 className="subtittle-small green">NEW RECOVEREDS</h1>
+                                    <h1 className="total-small">{brazilRefuses.toLocaleString()}</h1>
+                                    <h1 className="subtittle-small green">TOTAL REFUSES</h1>
                                 </div>
                                 <div className="small-stats">
-                                    <h1 className="total-small">574,365</h1>
-                                    <h1 className="subtittle-small green">TOTAL RECOVEREDS</h1>
+                                    <h1 className="total-small">{brazilRefuses.toLocaleString()}</h1>
+                                    <h1 className="subtittle-small green">TOTAL REFUSES</h1>
                                 </div>
                             </div>
+                        </div>
+                        <div className="graph-container">
+                        <Chart
+                                chartType="Bar"
+                                width="110%"
+                                height="90%"
+                                data={[
+                                    ["", "Cases", "Death"],
+                                    ...chartData.slice(1, 5).map(row => [row[0], row[1], row[2]]) 
+                                ]}
+                                options={{
+                                    colors: ['#53C8A4', '#003838'] 
+                                }}
+                            />     
                         </div>
                     </div>
                     <Tittle
@@ -118,8 +152,9 @@ const Home = () => {
                         {selectedStates.map((state: DataProps) => (
                             <Card
                                 date={state.formattedDate}
-                                time={state.formattedTime} // Passar a hora formatada
+                                time={state.formattedTime}
                                 state={state.state}
+
                                 confirmedCases={state.cases.toLocaleString()}
                                 casesDeath={state.deaths.toLocaleString()}
                                 newDeaths={state.suspects.toLocaleString()}
