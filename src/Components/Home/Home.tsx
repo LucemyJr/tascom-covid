@@ -57,7 +57,7 @@ const Home = () => {
                     };
                 });
 
-                setSelectedStates(formattedData.slice(0, 4));
+                setSelectedStates(formattedData.slice(1, 5));
 
                 const chartDataArray: Array<Array<string | number>> = [
                     ["", "Cases", "Death"]
@@ -133,10 +133,10 @@ const Home = () => {
                         <Chart
                                 chartType="Bar"
                                 width="100%"
-                                height="90%"
+                                height="180px"
                                 data={[
                                     ["", "Cases", "Death"],
-                                    ...chartData.slice(1, 5).map(row => [row[0], row[1], row[2]]) 
+                                    ...chartData.slice(2, 6).map(row => [row[0], row[1], row[2]]) 
                                 ]}
                                 options={{
                                     colors: ['#53C8A4', '#003838'] 
