@@ -64,7 +64,7 @@ const Home = () => {
                 ];
                 formattedData.forEach((state: DataProps) => {
                     chartDataArray.push([
-                        state.state,
+                        state.uf,
                         state.cases,
                         state.deaths,
                     ]);
@@ -132,7 +132,7 @@ const Home = () => {
                         <div className="graph-container">
                         <Chart
                                 chartType="Bar"
-                                width="110%"
+                                width="100%"
                                 height="90%"
                                 data={[
                                     ["", "Cases", "Death"],
