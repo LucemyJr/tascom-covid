@@ -127,14 +127,37 @@ main{
 
 .cards-section{
     display: flex;
+    flex-direction: column;
     justify-content: center;
+}
+
+.button-all{
+     display: flex;
+    justify-content: center;
+    width: 20%;
+    font-weight: bold;
+    background-color: #53C8A4;
+    padding: 8px 24px;
+    margin: auto;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.row{
+    display: flex;
     gap: 25px;
+    margin-bottom: 25px;
+}
+
+.button-more:hover{
+    transition: .2s;
+    transform: scale(1.05);
 }
 
 .footer{
     height: 70px;
     background-color: #003838;
-    margin-top: 80px;
+    margin-top: 50px;
 }
 
 
@@ -145,8 +168,11 @@ main{
         align-items: center;
     }
     .cards-section{
-        flex-direction: column;
         align-items: center;
+    }
+
+    .row{
+        flex-direction: column;
     }
 
     .global-stats{
@@ -155,10 +181,16 @@ main{
         height: 500px;
         flex-direction: column;
     }
+
+    .button-all{
+       width: 50%;
+   }
+
     .graph-container{
         display: flex;
         align-items: center;
         justify-content: center;
         width: 90%;
     }
+    
 }

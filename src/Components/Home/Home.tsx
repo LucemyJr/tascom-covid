@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import "./Home.css";
 import Tittle from '../Tittle/Tittle.jsx';
 import Card from '../Card/Card';
@@ -17,6 +17,7 @@ interface DataProps {
     formattedTime: string;
 }
 
+
 const Home = () => {
     const [brazilConfirmed, setBrazilConfirmed] = useState<number>(0);
     const [brazilDeaths, setBrazilDeaths] = useState<number>(0);
@@ -24,6 +25,7 @@ const Home = () => {
     const [brazilRefuses, setBrazilRefuses] = useState<number>(0);
     const [selectedStates, setSelectedStates] = useState<DataProps[]>([]);
     const [chartData, setChartData] = useState<Array<Array<string | number>>>([]);
+    const [displayedStates, setDisplayedStates] = useState<DataProps[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,7 +33,7 @@ const Home = () => {
                 const response = await fetch('https://covid19-brazil-api.vercel.app/api/report/v1');
                 const data = await response.json();
 
-                // Somando todos os casos Confirmados e casos de Morte para obter os valores totais do Brasil
+                // Somando todos os dados de todos os estados para obter os valores totais do Brasil
                 const totalCases = data.data.reduce((acc: number, curr: DataProps) => acc + curr.cases, 0);
                 const totalDeaths = data.data.reduce((acc: number, curr: DataProps) => acc + curr.deaths, 0);
                 const totalSuspects = data.data.reduce((acc: number, curr: DataProps) => acc + curr.suspects, 0);
@@ -57,7 +59,8 @@ const Home = () => {
                     };
                 });
 
-                setSelectedStates(formattedData.slice(1, 5));
+                setSelectedStates(formattedData);
+                setDisplayedStates(formattedData.slice(0, 4));
 
                 const chartDataArray: Array<Array<string | number>> = [
                     ["", "Cases", "Death"]
@@ -78,8 +81,10 @@ const Home = () => {
         fetchData();
     }, []);
 
+    const handleGetMore = () => {
+        setDisplayedStates(selectedStates);
+    };
     
-
     return (
         <>
             <header>
@@ -136,7 +141,7 @@ const Home = () => {
                                 height="180px"
                                 data={[
                                     ["", "Cases", "Death"],
-                                    ...chartData.slice(2, 6).map(row => [row[0], row[1], row[2]]) 
+                                    ...chartData.slice(1, 5).map(row => [row[0], row[1], row[2]]) 
                                 ]}
                                 options={{
                                     colors: ['#53C8A4', '#003838'] 
@@ -149,21 +154,30 @@ const Home = () => {
                         tittle="SITUATION BY STATES"
                     />
                     <div className="cards-section">
-                        {selectedStates.map((state: DataProps) => (
-                            <Card
-                                date={state.formattedDate}
-                                time={state.formattedTime}
-                                state={state.state}
-
-                                confirmedCases={state.cases.toLocaleString()}
-                                casesDeath={state.deaths.toLocaleString()}
-                                newDeaths={state.suspects.toLocaleString()}
-                                newConfirmed={state.suspects.toLocaleString()}
-                                newRecovereds={state.refuses.toLocaleString()}
-                                totalRecovereds={state.refuses.toLocaleString()}
-                            />
+                        {displayedStates.reduce((rows: DataProps[][], state: DataProps, index: number) => {
+                            if (index % 4 === 0) rows.push([]);
+                            rows[rows.length - 1].push(state);
+                            return rows;
+                        }, []).map((row: DataProps[], rowIndex: number) => (
+                            <div className="row" key={rowIndex}>
+                                {row.map((state: DataProps) => (
+                                    <Card
+                                        key={state.uid}
+                                        date={state.formattedDate}
+                                        time={state.formattedTime}
+                                        state={state.state}
+                                        confirmedCases={state.cases.toLocaleString()}
+                                        casesDeath={state.deaths.toLocaleString()}
+                                        newDeaths={state.suspects.toLocaleString()}
+                                        newConfirmed={state.suspects.toLocaleString()}
+                                        newRecovereds={state.refuses.toLocaleString()}
+                                        totalRecovereds={state.refuses.toLocaleString()}
+                                    />
+                                ))}
+                            </div>
                         ))}
                     </div>
+                    <button className="button-all" onClick={handleGetMore} >View All...</button>
                 </section>
             </main>
             <div className="footer"></div>
